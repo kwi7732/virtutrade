@@ -589,6 +589,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
 
     const baseAsset = s.symbol.replace('USDT', '');
     const quoteAsset = 'USDT';
+    const FEE_RATE = 0.001;
 
     // ---- Pre-flight: simulate fill to know exact cost ----
     let remaining = quantity;
@@ -601,18 +602,35 @@ export function TradeProvider({ children }: { children: ReactNode }) {
       remaining -= fillQty;
       consumedLevels.push({ price: level.price, qty: fillQty });
     }
-    const filledQty = quantity - remaining;
+    let filledQty = quantity - remaining;
     if (filledQty <= 0) return 'Insufficient liquidity';
 
-    const avgPrice = totalCost / filledQty;
-    const fee = totalCost * 0.001; // 0.1% fee
+    let avgPrice = totalCost / filledQty;
+    let fee = totalCost * FEE_RATE;
 
-    // ---- Strict balance check ----
+    // ---- Auto-clamp: if total exceeds balance, reduce quantity to fit ----
     if (side === 'BUY') {
       const usdtBalance = getBalance(quoteAsset);
       const totalRequired = totalCost + fee;
-      if (totalRequired > usdtBalance + 0.01) { // 0.01 tolerance for floating point
-        return `Insufficient USDT: need ${totalRequired.toFixed(2)}, have ${usdtBalance.toFixed(2)}`;
+      if (totalRequired > usdtBalance + 0.01) {
+        // Recalculate: max spendable = balance / (1 + feeRate)
+        const maxSpend = usdtBalance / (1 + FEE_RATE);
+        let newRemaining = maxSpend;
+        totalCost = 0;
+        filledQty = 0;
+        consumedLevels.length = 0;
+        for (const level of levels) {
+          if (newRemaining <= 0) break;
+          const maxQtyAtPrice = newRemaining / level.price;
+          const fillQty = Math.min(maxQtyAtPrice, level.quantity);
+          totalCost += level.price * fillQty;
+          filledQty += fillQty;
+          newRemaining -= level.price * fillQty;
+          consumedLevels.push({ price: level.price, qty: fillQty });
+        }
+        if (filledQty <= 0) return 'Insufficient balance';
+        avgPrice = totalCost / filledQty;
+        fee = totalCost * FEE_RATE;
       }
     } else {
       const baseBalance = getBalance(baseAsset);
@@ -635,6 +653,34 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     for (const cl of consumedLevels) {
       const key = `${depSide}:${cl.price}`;
       depletionMapRef.current.set(key, (depletionMapRef.current.get(key) || 0) + cl.qty);
+    }
+
+    // ---- Inject user trade into recent trades ----
+    dispatch({
+      type: 'ADD_RECENT_TRADE',
+      payload: {
+        id: `user-${Date.now()}`,
+        price: avgPrice,
+        quantity: filledQty,
+        time: Date.now(),
+        isBuyerMaker: side === 'SELL',
+      },
+    });
+
+    // ---- Inject into chart (update last kline) ----
+    const klines = s.klines;
+    if (klines.length > 0) {
+      const last = klines[klines.length - 1];
+      dispatch({
+        type: 'UPDATE_KLINE',
+        payload: {
+          ...last,
+          close: avgPrice,
+          high: Math.max(last.high, avgPrice),
+          low: Math.min(last.low, avgPrice),
+          volume: last.volume + filledQty,
+        },
+      });
     }
 
     // ---- Execute: update portfolio ----
