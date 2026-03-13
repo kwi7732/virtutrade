@@ -58,11 +58,11 @@ function TradeContent() {
         <div className={styles.mobileChart}>
           <TradingChart />
         </div>
-        <div className={styles.mobileOb}>
-          <OrderBook />
-        </div>
         <div className={styles.mobileForm}>
           {state.tradeMode === 'spot' ? <TradeForm /> : <FuturesTradeForm />}
+        </div>
+        <div className={styles.mobileOb}>
+          <OrderBook />
         </div>
         <div className={styles.mobileBottom}>
           <UserOrders />
