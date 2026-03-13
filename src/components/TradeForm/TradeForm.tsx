@@ -70,7 +70,9 @@ export default function TradeForm() {
     setPercentage(pct);
     if (currentPrice <= 0) return;
     if (side === 'BUY') {
-      const maxQty = (availableBalance * pct / 100) / currentPrice;
+      // Deduct 0.1% fee so 100% doesn't exceed balance
+      const spendable = (availableBalance * pct / 100) / 1.001;
+      const maxQty = spendable / currentPrice;
       setAmountInput(maxQty.toFixed(6));
     } else {
       const qty = availableBalance * pct / 100;
