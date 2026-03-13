@@ -1,0 +1,169 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0 12px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.tabActive {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.badge {
+  background: var(--accent);
+  color: #0b0e11;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 8px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 140px 100px 60px 70px 120px 100px 70px 80px;
+  padding: 6px 16px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+}
+
+.assetsHeader {
+  grid-template-columns: 80px 1fr 1fr 1fr;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 140px 100px 60px 70px 120px 100px 70px 80px;
+  padding: 5px 16px;
+  font-size: 11px;
+  align-items: center;
+  transition: background var(--transition-fast);
+}
+
+.tableRow:hover {
+  background: var(--bg-hover);
+}
+
+.assetsRow {
+  grid-template-columns: 80px 1fr 1fr 1fr;
+}
+
+.cellTime {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.coinName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid var(--red);
+  border-radius: 3px;
+  color: var(--red);
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.cancelBtn:hover {
+  background: var(--red-bg);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .tableHeader, .tableRow {
+    grid-template-columns: 100px 80px 50px 60px 90px 80px 50px 60px;
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+  .assetsHeader, .assetsRow {
+    grid-template-columns: 60px 1fr 1fr 1fr;
+  }
+  .positionsHeader, .positionsRow {
+    grid-template-columns: 80px 60px 40px 60px 80px 80px 80px 60px 80px 70px;
+  }
+}
+
+.positionsHeader {
+  grid-template-columns: 90px 70px 50px 70px 100px 100px 100px 70px 100px 80px;
+}
+
+.positionsRow {
+  grid-template-columns: 90px 70px 50px 70px 100px 100px 100px 70px 100px 80px;
+}
+
+.liqPriceCell {
+  color: var(--red);
+}
+
+.closeBtn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 10px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.closeBtn:hover {
+  background: var(--accent-dim);
+}

@@ -1,0 +1,169 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  overflow-y: auto;
+}
+
+.sideTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.sideTab {
+  padding: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.sideTab.buyActive {
+  background: var(--green-bg);
+  color: var(--green);
+  border-bottom: 2px solid var(--green);
+}
+
+.sideTab.sellActive {
+  background: var(--red-bg);
+  color: var(--red);
+  border-bottom: 2px solid var(--red);
+}
+
+.typeTabs {
+  display: flex;
+  gap: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.typeTab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.typeTab:hover {
+  color: var(--text-primary);
+}
+
+.typeTab.typeActive {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.form {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balanceLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.balanceValue {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  padding-right: 50px !important;
+}
+
+.inputSuffix {
+  position: absolute;
+  right: 10px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.percentBtns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.pctBtn {
+  padding: 4px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.pctBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pctBtn.pctActive {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.totalRow, .feeRow, .slippageRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.totalLabel, .slippageLabel {
+  color: var(--text-secondary);
+}
+
+.totalValue {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.slippageValue {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}

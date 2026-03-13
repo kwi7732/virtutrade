@@ -1,0 +1,515 @@
+/* =========================================
+   VirtuTrade — Global Styles
+   Binance/Upbit Dark Theme
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Core Colors */
+  --bg-primary: #0b0e11;
+  --bg-secondary: #1e2329;
+  --bg-tertiary: #2b3139;
+  --bg-hover: #363c45;
+  --bg-input: #2b3139;
+  
+  /* Accent */
+  --accent: #f0b90b;
+  --accent-hover: #f8d12f;
+  --accent-dim: rgba(240, 185, 11, 0.1);
+  
+  /* Text */
+  --text-primary: #eaecef;
+  --text-secondary: #848e9c;
+  --text-tertiary: #5e6673;
+  --text-white: #ffffff;
+  
+  /* Trading Colors */
+  --green: #0ecb81;
+  --green-bg: rgba(14, 203, 129, 0.1);
+  --green-hover: rgba(14, 203, 129, 0.15);
+  --red: #f6465d;
+  --red-bg: rgba(246, 70, 93, 0.1);
+  --red-hover: rgba(246, 70, 93, 0.15);
+  
+  /* Borders */
+  --border: #2b3139;
+  --border-light: #363c45;
+  
+  /* Chart */
+  --chart-bg: #1e2329;
+  --chart-grid: #2b3139;
+  
+  /* Sizing */
+  --header-height: 48px;
+  --asset-bar-height: 44px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Font */
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Only lock overflow on large desktop screens where the grid fills viewport */
+@media (min-width: 901px) {
+  html, body {
+    overflow: hidden;
+  }
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+/* ========== Utility ========== */
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-accent { color: var(--accent); }
+.text-secondary { color: var(--text-secondary); }
+.text-mono { font-family: var(--font-mono); }
+
+.bg-green { background: var(--green); }
+.bg-red { background: var(--red); }
+
+/* ========== Buttons ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #0b0e11;
+}
+.btn-accent:hover {
+  background: var(--accent-hover);
+}
+
+.btn-buy {
+  background: var(--green);
+  color: var(--text-white);
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+.btn-buy:hover {
+  filter: brightness(1.1);
+}
+
+.btn-sell {
+  background: var(--red);
+  color: var(--text-white);
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+.btn-sell:hover {
+  filter: brightness(1.1);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+/* ========== Inputs ========== */
+.input-field {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+.input-field:focus {
+  border-color: var(--accent);
+}
+.input-field::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ========== Tabs ========== */
+.tab-group {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab-item {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.tab-item:hover {
+  color: var(--text-primary);
+}
+.tab-item.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ========== Panel ========== */
+.panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ========== Toast ========== */
+.toast-container {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+  max-width: 340px;
+}
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+/* ========== Loading Spinner ========== */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== Trading Layout (4-col like AmberGrid) ========== */
+.trade-layout {
+  display: grid;
+  grid-template-columns: 1fr 220px 220px 280px;
+  grid-template-rows: var(--asset-bar-height) 1fr 200px;
+  gap: 0;
+  height: calc(100vh - var(--header-height));
+  background: var(--border);
+}
+
+.trade-layout .asset-bar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.trade-layout .chart-area {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.trade-layout .orderbook-area {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.trade-layout .trades-area {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.trade-layout .trade-form-area {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+.trade-layout .bottom-panel {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+
+/* ========== Responsive: Tablet ========== */
+@media (max-width: 1200px) {
+  .trade-layout {
+    grid-template-columns: 1fr 200px 260px;
+    grid-template-rows: var(--asset-bar-height) 1fr 280px 200px;
+  }
+  .trade-layout .chart-area {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .trade-layout .orderbook-area {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .trade-layout .trades-area {
+    display: none;
+  }
+  .trade-layout .trade-form-area {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .trade-layout .bottom-panel {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
+/* ========== Responsive: Mobile & Tablet (scroll layout) ========== */
+@media (max-width: 900px) {
+  .trade-layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    gap: 1px;
+    overflow-y: auto;
+  }
+  .trade-layout .asset-bar {
+    min-height: var(--asset-bar-height);
+    flex-shrink: 0;
+  }
+  .trade-layout .chart-area {
+    height: 360px;
+    min-height: 360px;
+    flex-shrink: 0;
+  }
+  .trade-layout .orderbook-area {
+    height: 320px;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+  .trade-layout .trades-area {
+    display: none;
+  }
+  .trade-layout .trade-form-area {
+    flex-shrink: 0;
+  }
+  .trade-layout .bottom-panel {
+    min-height: 200px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .trade-layout .chart-area {
+    height: 300px;
+    min-height: 300px;
+  }
+  .trade-layout .orderbook-area {
+    height: 280px;
+    min-height: 280px;
+  }
+}
+
+/* ========== Number Formatting ========== */
+.price-up {
+  color: var(--green);
+}
+.price-down {
+  color: var(--red);
+}
+.price-flash-up {
+  animation: flash-green 0.5s ease;
+}
+.price-flash-down {
+  animation: flash-red 0.5s ease;
+}
+
+@keyframes flash-green {
+  0% { background: var(--green-bg); }
+  100% { background: transparent; }
+}
+@keyframes flash-red {
+  0% { background: var(--red-bg); }
+  100% { background: transparent; }
+}
+
+/* ========== Login Page ========== */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: 24px;
+}
+
+.login-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+.google-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--text-white);
+  color: #1f1f1f;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+}
+.google-btn:hover {
+  background: #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.google-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.login-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+  text-align: left;
+}
+.login-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+.login-feature-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.login-feature h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.login-feature p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+  .login-features {
+    grid-template-columns: 1fr;
+  }
+}

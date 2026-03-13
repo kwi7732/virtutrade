@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border);
+  min-height: 32px;
+}
+
+.intervals {
+  display: flex;
+  gap: 2px;
+}
+
+.intervalBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.intervalBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.intervalBtn.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.indicators {
+  display: flex;
+  gap: 8px;
+}
+
+.indicatorLabel {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.indicatorLabel:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-light);
+}
+
+.chart {
+  flex: 1;
+  min-height: 0;
+}

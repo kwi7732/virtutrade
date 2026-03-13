@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  overflow: hidden;
+}
+
+.horizontal {
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.vertical {
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Splitter Handle */
+.splitter {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border);
+  z-index: 10;
+  transition: background var(--transition-fast);
+}
+
+.splitter:hover {
+  background: var(--accent);
+}
+
+.splitterH {
+  width: 4px;
+  cursor: col-resize;
+  flex-direction: column;
+}
+
+.splitterV {
+  height: 4px;
+  cursor: row-resize;
+  flex-direction: row;
+}
+
+.splitterLine {
+  width: 2px;
+  height: 24px;
+  background: var(--text-tertiary);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.splitter:hover .splitterLine {
+  opacity: 1;
+}
+
+.splitterV .splitterLine {
+  width: 24px;
+  height: 2px;
+}
+
+/* Hide splitters on mobile */
+@media (max-width: 900px) {
+  .splitter {
+    display: none;
+  }
+  .panel {
+    width: 100% !important;
+    height: auto !important;
+  }
+  .horizontal {
+    flex-direction: column;
+  }
+}

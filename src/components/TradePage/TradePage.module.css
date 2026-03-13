@@ -1,0 +1,129 @@
+/* TradePage Layout Module */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.assetBar {
+  flex-shrink: 0;
+  height: var(--asset-bar-height);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Desktop: takes full remaining height */
+.desktopBody {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Panels */
+.chartPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--bg-secondary);
+}
+
+.obPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+}
+
+.tradesPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+}
+
+.formPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+}
+
+.bottomPanel {
+  overflow: hidden;
+  height: 100%;
+  border-top: 1px solid var(--border);
+}
+
+/* Mobile layout: hidden on desktop */
+.mobileLayout {
+  display: none;
+}
+
+/* ========== Mobile / Tablet (<= 900px) ========== */
+@media (max-width: 900px) {
+  .wrapper {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .desktopBody {
+    display: none;
+  }
+
+  .mobileLayout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobileChart {
+    height: 360px;
+    min-height: 360px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobileOb {
+    height: 320px;
+    min-height: 320px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobileForm {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobileBottom {
+    min-height: 200px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobileChart {
+    height: 300px;
+    min-height: 300px;
+  }
+
+  .mobileOb {
+    height: 280px;
+    min-height: 280px;
+  }
+}

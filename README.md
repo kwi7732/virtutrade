@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VirtuTrade — 가상 암호화폐 거래소
 
-## Getting Started
+업비트/바이낸스 수준의 가상 암호화폐 거래소입니다. 실시간 바이낸스 가격 데이터를 기반으로 가상 거래를 할 수 있습니다.
 
-First, run the development server:
+## 주요 기능
+
+- 🔐 **Google 로그인** (Firebase Auth) + 데모 모드
+- 💰 **₩1억 / $70,000** 가상 시드머니
+- 📊 **TradingView 차트** (캔들스틱, 볼륨, 시간프레임)
+- 📋 **실시간 호가창** (바이낸스 기반)
+- 💱 **시장가/지정가 주문** (슬리피지 구현)
+- 🌐 **한국어/영어** 전환 (원화/달러)
+- 📱 **PWA** (모바일 홈화면 추가 가능)
+
+## 시작하기
+
+### 프론트엔드
 
 ```bash
+cd virtutrade
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 백엔드 (Optional)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd backend
+pip install -r requirements.txt
+python main.py
+# http://localhost:8000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> **참고:** 프론트엔드만으로도 Binance WebSocket에 직접 연결하여 완전히 작동합니다.
 
-## Learn More
+### Firebase 설정 (Optional)
 
-To learn more about Next.js, take a look at the following resources:
+Firebase 미설정 시 자동으로 **Demo Mode**로 동작합니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+```
