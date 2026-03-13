@@ -6,7 +6,7 @@ import type { IChartApi, ISeriesApi, CandlestickData, HistogramData, Time, IPric
 import { useTrade } from '@/contexts/TradeContext';
 import styles from './TradingChart.module.css';
 
-const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
+const INTERVALS = ['1s', '1m', '3m', '5m', '15m', '1h', '4h', '1d', '1w'];
 
 export default function TradingChart() {
   const { state, setInterval } = useTrade();

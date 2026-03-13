@@ -496,6 +496,21 @@ export function TradeProvider({ children }: { children: ReactNode }) {
           const tradeTime = data.T;
           const isBuyerMaker = data.m;
 
+          // Real-time chart update: update last candle with every trade
+          const klines = stateRef.current.klines;
+          if (klines.length > 0) {
+            const last = klines[klines.length - 1];
+            dispatch({
+              type: 'UPDATE_KLINE',
+              payload: {
+                ...last,
+                close: tradePrice,
+                high: Math.max(last.high, tradePrice),
+                low: Math.min(last.low, tradePrice),
+              },
+            });
+          }
+
           // If same price as current batch, aggregate
           if (tradeBatch && tradeBatch.price === tradePrice && tradeBatch.isBuyerMaker === isBuyerMaker) {
             tradeBatch.quantity += tradeQty;
