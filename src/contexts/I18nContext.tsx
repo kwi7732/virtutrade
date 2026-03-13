@@ -46,22 +46,12 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // KRW exchange rate (approximate)
-  const KRW_RATE = 1430;
-
-  const formatPrice = useCallback((usdPrice: number): string => {
-    if (locale === 'ko') {
-      const krwPrice = usdPrice * KRW_RATE;
-      if (krwPrice >= 1000000) {
-        return '₩' + krwPrice.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
-      }
-      return '₩' + krwPrice.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+  const formatPrice = useCallback((price: number): string => {
+    if (price >= 1) {
+      return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-    if (usdPrice >= 1) {
-      return '$' + usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-    return '$' + usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 });
-  }, [locale]);
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 });
+  }, []);
 
   const formatNumber = useCallback((num: number, decimals: number = 2): string => {
     return num.toLocaleString(locale === 'ko' ? 'ko-KR' : 'en-US', {
@@ -76,8 +66,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       messages,
       t,
       setLocale,
-      currency: locale === 'ko' ? 'KRW' : 'USD',
-      currencySymbol: locale === 'ko' ? '₩' : '$',
+      currency: 'USDT',
+      currencySymbol: 'USDT',
       formatPrice,
       formatNumber,
     }}>

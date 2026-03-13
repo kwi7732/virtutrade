@@ -100,7 +100,7 @@ export default function OrderBook() {
               {priceDirection}
             </span>
             <span className={styles.midPriceUsd}>
-              ≈ ${ticker.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {ticker.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
             </span>
           </>
         )}
