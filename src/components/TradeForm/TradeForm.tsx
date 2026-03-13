@@ -86,7 +86,10 @@ export default function TradeForm() {
 
   const handleSubmit = () => {
     const qty = parseFloat(amountInput);
-    if (isNaN(qty) || qty <= 0) return;
+    if (!amountInput || isNaN(qty) || qty <= 0) {
+      toast('수량을 입력해주세요', 'error');
+      return;
+    }
 
     if (orderType === 'MARKET') {
       if (side === 'BUY' && totalValue > availableBalance) {
@@ -105,7 +108,10 @@ export default function TradeForm() {
       toast(t('trade.orderSuccess'), 'success');
     } else {
       const price = parseFloat(priceInput);
-      if (isNaN(price) || price <= 0) return;
+      if (!priceInput || isNaN(price) || price <= 0) {
+        toast('가격을 입력해주세요', 'error');
+        return;
+      }
       const error = executeLimitOrder(side, price, qty);
       if (error) {
         toast(error, 'error');

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { createChart, CandlestickSeries, HistogramSeries } from 'lightweight-charts';
-import type { IChartApi, ISeriesApi, CandlestickData, HistogramData, Time } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, CandlestickData, HistogramData, Time, IPriceLine } from 'lightweight-charts';
 import { useTrade } from '@/contexts/TradeContext';
 import styles from './TradingChart.module.css';
 
@@ -17,6 +17,7 @@ export default function TradingChart() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const volumeSeriesRef = useRef<ISeriesApi<any> | null>(null);
   const prevKlineLenRef = useRef(0);
+  const priceLinesRef = useRef<IPriceLine[]>([]);
 
   // Initialize chart
   useEffect(() => {
@@ -109,7 +110,6 @@ export default function TradingChart() {
       color: k.close >= k.open ? 'rgba(14, 203, 129, 0.3)' : 'rgba(246, 70, 93, 0.3)',
     }));
 
-    // Full replace on initial load or symbol change, update on streaming
     if (prevKlineLenRef.current === 0 || Math.abs(state.klines.length - prevKlineLenRef.current) > 5) {
       candleSeriesRef.current.setData(candleData);
       volumeSeriesRef.current.setData(volumeData);
@@ -117,7 +117,6 @@ export default function TradingChart() {
         chartRef.current.timeScale().fitContent();
       }
     } else {
-      // Streaming update — just update last candle
       const lastCandle = candleData[candleData.length - 1];
       const lastVolume = volumeData[volumeData.length - 1];
       if (lastCandle) candleSeriesRef.current.update(lastCandle);
@@ -126,6 +125,89 @@ export default function TradingChart() {
 
     prevKlineLenRef.current = state.klines.length;
   }, [state.klines]);
+
+  // ========== Order Price Lines (Binance-style) ==========
+  useEffect(() => {
+    if (!candleSeriesRef.current) return;
+    const series = candleSeriesRef.current;
+
+    // Remove existing price lines
+    for (const line of priceLinesRef.current) {
+      series.removePriceLine(line);
+    }
+    priceLinesRef.current = [];
+
+    // Draw lines for open orders on current symbol
+    const openOrders = state.orders.filter(
+      o => o.status === 'OPEN' && o.symbol === state.symbol
+    );
+
+    for (const order of openOrders) {
+      const isBuy = order.side === 'BUY';
+      const priceLine = series.createPriceLine({
+        price: order.price,
+        color: isBuy ? '#0ecb81' : '#f6465d',
+        lineWidth: 1,
+        lineStyle: 2, // Dashed
+        axisLabelVisible: true,
+        title: `${isBuy ? '매수' : '매도'} ${order.quantity}`,
+        axisLabelColor: isBuy ? '#0ecb81' : '#f6465d',
+        axisLabelTextColor: '#fff',
+      });
+      priceLinesRef.current.push(priceLine);
+    }
+
+    // Draw lines for open futures positions
+    const openPositions = state.positions.filter(
+      p => p.symbol === state.symbol
+    );
+
+    for (const pos of openPositions) {
+      const isLong = pos.side === 'LONG';
+      // Entry price line
+      const entryLine = series.createPriceLine({
+        price: pos.entryPrice,
+        color: isLong ? '#0ecb81' : '#f6465d',
+        lineWidth: 2,
+        lineStyle: 0, // Solid
+        axisLabelVisible: true,
+        title: `${isLong ? 'LONG' : 'SHORT'} ${pos.leverage}x`,
+        axisLabelColor: isLong ? '#0ecb81' : '#f6465d',
+        axisLabelTextColor: '#fff',
+      });
+      priceLinesRef.current.push(entryLine);
+
+      // Liquidation price line
+      const liqLine = series.createPriceLine({
+        price: pos.liquidationPrice,
+        color: '#fcd535',
+        lineWidth: 1,
+        lineStyle: 3, // Dotted
+        axisLabelVisible: true,
+        title: '청산',
+        axisLabelColor: '#fcd535',
+        axisLabelTextColor: '#000',
+      });
+      priceLinesRef.current.push(liqLine);
+    }
+
+    // Draw average entry price for current holding (spot)
+    const baseAsset = state.symbol.replace('USDT', '');
+    const holding = state.portfolio.find(a => a.asset === baseAsset);
+    if (holding && holding.balance > 0.00000001 && holding.avgPrice > 0) {
+      const avgLine = series.createPriceLine({
+        price: holding.avgPrice,
+        color: '#2962ff',
+        lineWidth: 2,
+        lineStyle: 0, // Solid
+        axisLabelVisible: true,
+        title: `평단 ${holding.balance.toFixed(4)}개`,
+        axisLabelColor: '#2962ff',
+        axisLabelTextColor: '#fff',
+      });
+      priceLinesRef.current.push(avgLine);
+    }
+  }, [state.orders, state.positions, state.portfolio, state.symbol]);
 
   // Reset on symbol change
   useEffect(() => {

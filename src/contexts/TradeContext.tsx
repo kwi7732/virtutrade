@@ -328,6 +328,10 @@ export function TradeProvider({ children }: { children: ReactNode }) {
   stateRef.current = state;
   const dataLoadedRef = useRef(false);
 
+  // Orderbook depletion map: tracks consumed qty per price level
+  // Key format: "asks:83000" or "bids:82990"
+  const depletionMapRef = useRef<Map<string, number>>(new Map());
+
   // ========== Load user data from Supabase on mount ==========
   useEffect(() => {
     if (!isSupabaseConfigured || dataLoadedRef.current) return;
@@ -389,6 +393,27 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     let ws: WebSocket | null = null;
     let cancelled = false;
 
+    // Trade batching: aggregate same-price trades within 200ms window
+    let tradeBatchTimer: ReturnType<typeof setTimeout> | null = null;
+    let tradeBatch: { price: number; quantity: number; time: number; isBuyerMaker: boolean } | null = null;
+    let tradeBatchId = 0;
+
+    const flushTradeBatch = () => {
+      if (tradeBatch && !cancelled) {
+        dispatch({
+          type: 'ADD_RECENT_TRADE',
+          payload: {
+            id: `batch-${tradeBatchId++}`,
+            price: tradeBatch.price,
+            quantity: tradeBatch.quantity,
+            time: tradeBatch.time,
+            isBuyerMaker: tradeBatch.isBuyerMaker,
+          },
+        });
+        tradeBatch = null;
+      }
+    };
+
     // Debounce WebSocket connection to avoid StrictMode double-fire
     const connectTimer = setTimeout(() => {
       if (cancelled) return;
@@ -437,25 +462,53 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             },
           });
         } else if (stream.includes('@depth')) {
+          const rawBids = data.bids.map((b: string[]) => ({ price: parseFloat(b[0]), quantity: parseFloat(b[1]) }));
+          const rawAsks = data.asks.map((a: string[]) => ({ price: parseFloat(a[0]), quantity: parseFloat(a[1]) }));
+
+          // Apply depletion overlay and decay
+          const dm = depletionMapRef.current;
+          const applyDepletion = (levels: OrderBookLevel[], side: string) =>
+            levels.map(l => {
+              const key = `${side}:${l.price}`;
+              const dep = dm.get(key) || 0;
+              if (dep > 0) return { ...l, quantity: Math.max(0, l.quantity - dep) };
+              return l;
+            }).filter(l => l.quantity > 0.00000001);
+
+          // Decay all depletions by 30% per update (~100ms)
+          for (const [key, val] of dm.entries()) {
+            const decayed = val * 0.7;
+            if (decayed < 0.00001) dm.delete(key);
+            else dm.set(key, decayed);
+          }
+
           dispatch({
             type: 'SET_ORDERBOOK',
             payload: {
-              bids: data.bids.map((b: string[]) => ({ price: parseFloat(b[0]), quantity: parseFloat(b[1]) })),
-              asks: data.asks.map((a: string[]) => ({ price: parseFloat(a[0]), quantity: parseFloat(a[1]) })),
+              bids: applyDepletion(rawBids, 'bids'),
+              asks: applyDepletion(rawAsks, 'asks'),
               lastUpdateId: data.lastUpdateId,
             },
           });
         } else if (stream.includes('@trade')) {
-          dispatch({
-            type: 'ADD_RECENT_TRADE',
-            payload: {
-              id: String(data.t),
-              price: parseFloat(data.p),
-              quantity: parseFloat(data.q),
-              time: data.T,
-              isBuyerMaker: data.m,
-            },
-          });
+          const tradePrice = parseFloat(data.p);
+          const tradeQty = parseFloat(data.q);
+          const tradeTime = data.T;
+          const isBuyerMaker = data.m;
+
+          // If same price as current batch, aggregate
+          if (tradeBatch && tradeBatch.price === tradePrice && tradeBatch.isBuyerMaker === isBuyerMaker) {
+            tradeBatch.quantity += tradeQty;
+            tradeBatch.time = tradeTime;
+          } else {
+            // Flush previous batch if different price
+            flushTradeBatch();
+            tradeBatch = { price: tradePrice, quantity: tradeQty, time: tradeTime, isBuyerMaker };
+          }
+
+          // Reset timer — flush after 200ms of no new same-price trades
+          if (tradeBatchTimer) clearTimeout(tradeBatchTimer);
+          tradeBatchTimer = setTimeout(flushTradeBatch, 200);
         }
       };
 
@@ -471,6 +524,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
       clearTimeout(connectTimer);
+      if (tradeBatchTimer) clearTimeout(tradeBatchTimer);
       if (ws) ws.close();
     };
   }, [state.symbol, state.interval]);
@@ -524,11 +578,13 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     // ---- Pre-flight: simulate fill to know exact cost ----
     let remaining = quantity;
     let totalCost = 0;
+    const consumedLevels: { price: number; qty: number }[] = [];
     for (const level of levels) {
       if (remaining <= 0) break;
       const fillQty = Math.min(remaining, level.quantity);
       totalCost += level.price * fillQty;
       remaining -= fillQty;
+      consumedLevels.push({ price: level.price, qty: fillQty });
     }
     const filledQty = quantity - remaining;
     if (filledQty <= 0) return 'Insufficient liquidity';
@@ -558,6 +614,13 @@ export function TradeProvider({ children }: { children: ReactNode }) {
       avgFillPrice: avgPrice, status: 'FILLED', createdAt: Date.now(),
     };
     dispatch({ type: 'ADD_ORDER', payload: order });
+
+    // ---- Register orderbook depletion ----
+    const depSide = side === 'BUY' ? 'asks' : 'bids';
+    for (const cl of consumedLevels) {
+      const key = `${depSide}:${cl.price}`;
+      depletionMapRef.current.set(key, (depletionMapRef.current.get(key) || 0) + cl.qty);
+    }
 
     // ---- Execute: update portfolio ----
     if (side === 'BUY') {
